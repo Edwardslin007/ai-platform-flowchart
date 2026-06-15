@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI公共服务平台功能清单｜流程图与项目拆解</title>
+<style>
+:root {
+  --bg:#f5f7fb; --panel:#ffffff; --ink:#172033; --muted:#697386; --line:#dfe5ef;
+  --blue:#2563eb; --cyan:#0891b2; --green:#059669; --orange:#d97706; --red:#dc2626; --purple:#7c3aed;
+  --shadow:0 12px 35px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Arial,sans-serif;line-height:1.58}
+a{color:var(--blue);text-decoration:none} .wrap{max-width:1280px;margin:0 auto;padding:28px}
+.hero{background:linear-gradient(135deg,#10213f,#164e63 55%,#1e3a8a);color:#fff;border-radius:28px;padding:42px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-120px;top:-160px;width:420px;height:420px;border-radius:999px;background:rgba(255,255,255,.12)}
+.hero h1{font-size:34px;margin:0 0 12px;letter-spacing:-.02em} .hero p{max-width:960px;color:#dce9ff;font-size:16px;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.kpi b{display:block;font-size:30px;line-height:1;color:#0f172a} .kpi span{color:var(--muted);font-size:13px}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;margin:22px 0;box-shadow:var(--shadow)}
+h2{font-size:24px;margin:0 0 14px} h3{font-size:18px;margin:24px 0 10px} h4{margin:0 0 8px;font-size:15px}
+.lead{font-size:16px;color:#334155} .note{background:#fff7ed;border-left:5px solid var(--orange);border-radius:12px;padding:14px 16px;color:#7c2d12}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px} .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fff} .card p{margin:0;color:#475569}
+.layer-map{display:grid;gap:12px;margin-top:18px} .layer{display:grid;grid-template-columns:180px 1fr;gap:14px;align-items:stretch}
+.layer .label{border-radius:14px;padding:14px;color:#fff;font-weight:700;text-align:center;display:flex;align-items:center;justify-content:center}
+.layer .items{display:grid;grid-template-columns:repeat(5,1fr);gap:10px} .pill{border:1px solid var(--line);border-radius:14px;background:#f8fafc;padding:12px;text-align:center;font-size:13px;color:#334155}
+.b-blue{background:var(--blue)} .b-cyan{background:var(--cyan)} .b-green{background:var(--green)} .b-orange{background:var(--orange)} .b-purple{background:var(--purple)} .b-red{background:var(--red)}
+.flow{display:flex;align-items:stretch;gap:18px;margin:16px 0 24px;overflow-x:auto;padding-bottom:8px}
+.step{min-width:138px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px 12px;position:relative;text-align:center;box-shadow:0 5px 16px rgba(15,23,42,.05);font-size:13px}
+.step:not(:last-child):after{content:"→";position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:#64748b;font-size:18px;font-weight:700}
+.step.missing{border-color:#fdba74;background:#fff7ed;color:#9a3412} .step.core{border-color:#93c5fd;background:#eff6ff;color:#1e3a8a} .step.ai{border-color:#86efac;background:#f0fdf4;color:#14532d}
+.swim{display:grid;grid-template-columns:170px 1fr;gap:12px;margin:10px 0} .swim-label{font-weight:700;color:#334155;padding-top:12px}
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.table th,.table td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px} .table th{background:#f1f5f9;text-align:left;color:#334155} .table tr:last-child td{border-bottom:0}
+.badge{display:inline-block;border-radius:999px;padding:4px 9px;font-weight:800;font-size:12px;color:#fff} .badge.p0{background:var(--red)} .badge.p1{background:var(--orange)} .badge.p2{background:var(--blue)}
+.req-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px} .req-card{border:1px solid var(--line);border-radius:16px;padding:15px;background:#f8fafc} .req-card p{margin:0;color:#475569;font-size:13px}
+.module-detail{border:1px solid var(--line);border-radius:14px;background:#fff;margin:10px 0;padding:0} .module-detail summary{cursor:pointer;padding:14px 16px;font-weight:700;color:#0f172a}
+.module-list{margin:0;padding:0 18px 16px 34px} .module-list li{margin:8px 0} .module-list span{display:block;color:#64748b;font-size:13px}
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px} .menu-item{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff} .menu-item b{display:block;margin-bottom:6px} .menu-item span{color:#475569;font-size:13px}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px} .phase{border:1px solid var(--line);border-radius:16px;padding:14px;background:#f8fafc} .phase b{display:block;color:#0f172a} .phase em{font-style:normal;color:#2563eb;font-size:12px}
+.svgbox{border:1px solid var(--line);border-radius:18px;background:#f8fafc;padding:12px;overflow:auto}
+.footer{color:#64748b;font-size:12px;margin:28px 0 8px;text-align:center}
+@media(max-width:900px){.kpis,.grid2,.grid3,.req-grid,.menu-grid,.timeline{grid-template-columns:1fr}.layer{grid-template-columns:1fr}.layer .items{grid-template-columns:1fr 1fr}.wrap{padding:14px}.hero{padding:28px}}
+@media print{body{background:#fff}.wrap{max-width:none}.section,.hero,.kpi{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>AI公共服务平台功能清单：流程图与项目拆解</h1>
+    <p>基于上传的《AI公共服务平台功能清单_社区功能补充版.docx》重构为可销售平台视角：梳理业务闭环、模块边界、关键流程、问题清单，并补齐产品销售系统与支付结算系统需求。</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>645</b><span>原始功能点数量</span></div>
+    <div class="kpi"><b>12</b><span>原始功能表</span></div>
+    <div class="kpi"><b>8</b><span>重构后的产品域</span></div>
+    <div class="kpi"><b>17</b><span>主要问题点</span></div>
+  </div>
+
+  <section class="section">
+    <h2>一、结论先行：这个清单当前不是“产品方案”，更像“功能堆叠清单”</h2>
+    <p class="lead">从商业化角度看，它实际包含三套系统：<b>AI产业公共服务门户与交易运营平台</b>、<b>AI服务运营平台</b>、<b>AI开发/MLOps支撑平台</b>。如果你们要把它卖给别人，第一版不应直接做成 645 个功能点的大平台，而应先做出“产品展示—试用—授权—订单—支付—开票—交付—续费”的商业闭环。</p>
+    <div class="note"><b>最关键缺口：</b>现有清单里有产品展示、试用申请、API授权、调用统计、广告运营，但没有销售、报价、合同、订单、支付、发票、账单、退款、供应商分账和SaaS租户授权。这意味着平台能“展示服务”，但还不能稳定“卖服务”。</div>
+  </section>
+
+  <section class="section">
+    <h2>二、原始清单结构统计</h2>
+    <div class="grid2">
+      <div>
+        <h3>按原始功能表统计</h3>
+        <table class="table"><thead><tr><th>子系统</th><th>功能表</th><th>功能点</th><th>主要一级模块</th></tr></thead><tbody><tr><td>人工智能孵化服务子系统</td><td>AI算法集市</td><td>122</td><td>业务运营管理(57)、运营支撑管理(43)、算法集市门户(22)</td></tr>
+<tr><td>人工智能孵化服务子系统</td><td>AI算法服务</td><td>206</td><td>支撑能力组件(85)、算法服务管理(40)、资源智能调度管理(25)、监控运维管理(22)、算法创业孵化服务管理(22)</td></tr>
+<tr><td>人工智能孵化服务子系统</td><td>AI能力服务</td><td>65</td><td>语音识别与合成能力服务(13)、自然语言处理能力服务(13)、图像与视觉识别能力服务(13)、智能推荐与个性化能力服务(13)、智能对话与聊天机器人能力服务(13)</td></tr>
+<tr><td>人工智能孵化服务子系统</td><td>AI测评服务</td><td>30</td><td>AI测评工具(17)、领域专家测评服务(7)、理论标准知识库(6)</td></tr>
+<tr><td>人工智能孵化服务子系统</td><td>AI人才培训</td><td>22</td><td>培训课程管理(6)、培训广场后台管理(5)、培训广场(4)、培训学习管理(4)、培训辅助管理(3)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>数据集管理</td><td>58</td><td>数据标注(32)、数据集管理服务(13)、数据安全与权限管理(7)、数据集概览(4)、数据预处理(2)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>模型训练</td><td>42</td><td>模型训练服务(20)、训练支撑服务(12)、训练分析服务(10)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>模型推理</td><td>31</td><td>模型推理(7)、高性能推理(6)、模型监控(5)、模型部署(3)、多框架推理(3)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>模型管理</td><td>18</td><td>模型库管理(6)、模型存储管理(5)、模型开源许可证管理(1)、模型任务类型管理(1)、AI框架管理(1)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>模型资源服务</td><td>22</td><td>场景模型集成(16)、基础大模型集成(3)、行业大模型集成(3)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>基础框架集成</td><td>8</td><td>算法框架集成(4)、调度框架集成(2)、推理框架集成(2)</td></tr>
+<tr><td>人工智能创新开发子系统</td><td>开发支撑能力</td><td>21</td><td>平台镜像管理(17)、开发工作台(4)</td></tr></tbody></table>
+      </div>
+      <div>
+        <h3>按产品域重新归类</h3>
+        <table class="table"><thead><tr><th>重构产品域</th><th>对应功能点</th><th>占比</th></tr></thead><tbody><tr><td>门户/集市/运营后台</td><td>122</td><td>18.9%</td></tr>
+<tr><td>算法服务与算力调度</td><td>206</td><td>31.9%</td></tr>
+<tr><td>AI能力服务</td><td>65</td><td>10.1%</td></tr>
+<tr><td>AI测评服务</td><td>30</td><td>4.7%</td></tr>
+<tr><td>人才培训</td><td>22</td><td>3.4%</td></tr>
+<tr><td>数据集/标注/安全</td><td>58</td><td>9.0%</td></tr>
+<tr><td>训练/推理/模型管理</td><td>91</td><td>14.1%</td></tr>
+<tr><td>模型资源/框架/开发支撑</td><td>51</td><td>7.9%</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>三、推荐的目标产品架构</h2>
+    <p class="lead">建议将平台定位为：<b>面向政府园区/产业中心/加速器的 AI 产业服务交易与运营平台</b>。MLOps、算力调度、模型训练推理可以作为高级模块或私有化增强包，而不是首期必做。</p>
+    <div class="layer-map">
+      <div class="layer"><div class="label b-blue">用户体验层</div><div class="items"><div class="pill">官网门户</div><div class="pill">算法/能力/测评集市</div><div class="pill">培训广场</div><div class="pill">供需/成果广场</div><div class="pill">创业社区</div></div></div>
+      <div class="layer"><div class="label b-cyan">交易运营层</div><div class="items"><div class="pill">商品/SKU</div><div class="pill">试用申请</div><div class="pill">订单支付</div><div class="pill">合同发票</div><div class="pill">供应商结算</div></div></div>
+      <div class="layer"><div class="label b-green">AI服务层</div><div class="items"><div class="pill">算法服务</div><div class="pill">AI能力服务</div><div class="pill">测评服务</div><div class="pill">API授权</div><div class="pill">调用监控</div></div></div>
+      <div class="layer"><div class="label b-purple">开发支撑层</div><div class="items"><div class="pill">数据集/标注</div><div class="pill">模型库</div><div class="pill">训练任务</div><div class="pill">推理部署</div><div class="pill">镜像/算力</div></div></div>
+      <div class="layer"><div class="label b-orange">公共支撑层</div><div class="items"><div class="pill">统一用户/权限</div><div class="pill">流程引擎</div><div class="pill">消息服务</div><div class="pill">文件/帮助</div><div class="pill">日志审计/统计</div></div></div>
+      <div class="layer"><div class="label b-red">外部集成层</div><div class="items"><div class="pill">统一认证中心</div><div class="pill">支付渠道</div><div class="pill">电子签章/发票</div><div class="pill">区块链存证</div><div class="pill">鼓楼智脑数据回流</div></div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>四、核心业务流程图</h2>
+    <h3>1）用户购买与使用闭环：当前清单缺失后半段</h3>
+    <div class="flow">
+      <div class="step core">用户访问门户</div><div class="step core">注册/认证</div><div class="step core">浏览产品详情</div><div class="step core">申请试用</div><div class="step core">运营审核</div><div class="step core">授权 API / 演示环境</div><div class="step core">使用与调用统计</div><div class="step missing">报价/合同</div><div class="step missing">订单/支付</div><div class="step missing">开票/结算/续费</div>
+    </div>
+
+    <h3>2）算法/能力产品上架与交付流程</h3>
+    <div class="flow">
+      <div class="step ai">供应商/运营录入</div><div class="step ai">产品基础信息</div><div class="step ai">功能特性/场景</div><div class="step ai">版本/API文档</div><div class="step ai">演示/部署配置</div><div class="step ai">审核上架</div><div class="step ai">试用/购买</div><div class="step ai">授权/调用/监控</div><div class="step missing">收入结算</div>
+    </div>
+
+    <h3>3）AI开发平台/MLOps流程</h3>
+    <div class="flow">
+      <div class="step">数据集导入</div><div class="step">数据预处理</div><div class="step">数据标注</div><div class="step">训练任务</div><div class="step">模型库/版本</div><div class="step">推理部署</div><div class="step">API鉴权</div><div class="step">服务监控</div><div class="step">迭代优化</div>
+    </div>
+
+    <h3>4）供需对接与孵化服务流程</h3>
+    <div class="flow">
+      <div class="step">企业发布需求</div><div class="step">平台审核</div><div class="step">供需广场展示</div><div class="step">成果/供应方对接</div><div class="step">专家/资源支持</div><div class="step">活动/路演报名</div><div class="step">历史记录</div><div class="step missing">服务订单/佣金</div>
+    </div>
+
+    <h3>5）培训与社区运营流程</h3>
+    <div class="flow">
+      <div class="step">课程/活动发布</div><div class="step">用户报名/预约</div><div class="step">学习/签到</div><div class="step">学时记录</div><div class="step">评价反馈</div><div class="step">内容沉淀</div><div class="step missing">证书/收费/团购</div><div class="step missing">线索转化</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>五、模块拆解：应该怎么合并成平台产品</h2>
+    <div class="grid3">
+      <div class="card"><h4>1. 门户与内容运营</h4><p>承载官网、Banner、算法/能力/测评展示、关于我们、政策资源、市场报告、内容发布和广告运营。它的目标是获客、展示公信力、引导注册与试用。</p></div>
+      <div class="card"><h4>2. 交易与客户运营</h4><p>这是现有清单缺失最大的部分。应承载商品、价格、试用、订单、支付、合同、发票、账单、续费、供应商结算和销售线索。</p></div>
+      <div class="card"><h4>3. AI服务运营</h4><p>统一管理算法服务、能力服务和测评服务，包括产品资料、API文档、授权、IP白名单、调用日志、推送配置、监控和评价。</p></div>
+      <div class="card"><h4>4. 产业孵化服务</h4><p>包括创业支持资源、会议室预约、专家咨询、供需广场、科技成果、活动路演、社区问答和创业能力测试。</p></div>
+      <div class="card"><h4>5. 人才培训</h4><p>包括线上课程、线下培训报名、课程内容、讲师、学习记录、学时、评价。建议补充证书、考试、付费报名和企业团购。</p></div>
+      <div class="card"><h4>6. AI开发平台</h4><p>包括数据集、标注、模型训练、模型管理、模型推理、镜像仓库、算力资源和调度。建议作为高级版/私有化模块。</p></div>
+      <div class="card"><h4>7. 公共能力组件</h4><p>统一用户、角色权限、流程引擎、消息、文件、帮助、日志审计、统计分析。必须抽象为底座，避免各模块重复开发。</p></div>
+      <div class="card"><h4>8. 外部集成</h4><p>统一认证、区块链存证、鼓楼智脑数据回流、短信/邮件、支付、电子签章、电子发票、对象存储、K8S/Kubeflow/Triton。</p></div>
+      <div class="card"><h4>9. 可销售交付体系</h4><p>面向客户售卖时，还要有租户、授权许可、功能包、白标配置、部署参数、版本升级、客户管理员和运维 SLA。</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>六、必须补充：平台产品销售系统与支付系统需求</h2>
+    <p class="lead">下面这些模块应作为“交易商业化中台”，横向接入算法集市、能力服务、测评服务、培训、会议室、专家咨询、算力资源、模型授权等所有可售卖对象。</p>
+    <div class="req-grid"><div class='req-card'><h4>产品销售中心</h4><p>统一商品/SKU、套餐、价格、上下架、售卖区域、试用转正式、商品组合包、赠品/优惠券、渠道价、企业专属价。</p></div><div class='req-card'><h4>线索与客户管理</h4><p>官网咨询、试用申请、活动报名、社区问答、培训报名自动沉淀为线索；支持客户档案、跟进记录、商机阶段、销售负责人。</p></div><div class='req-card'><h4>报价与合同</h4><p>支持报价单、合同模板、电子签章、合同审批、合同附件、合同状态、合同到期提醒、续约流程。</p></div><div class='req-card'><h4>订单中心</h4><p>支持 API 商品、服务商品、课程商品、会议室预约、专家咨询、算力资源包、模型授权包的统一下单；订单状态、履约状态、售后状态分离。</p></div><div class='req-card'><h4>支付中心</h4><p>支持微信/支付宝/银联/对公转账/线下收款/余额支付/授信账期；支付回调、支付流水、失败重试、支付通知。</p></div><div class='req-card'><h4>计量计费中心</h4><p>按 API 调用次数、Token、并发、QPS、GPU 小时、存储容量、数据集容量、模型下载次数、课程席位、专家服务小时计费。</p></div><div class='req-card'><h4>账单与扣费</h4><p>日账单/月账单、预付费/后付费、余额预警、欠费停用、超额计费、套餐抵扣、资源包扣减、账单导出。</p></div><div class='req-card'><h4>发票与税务</h4><p>发票抬头、纳税人识别号、电子发票/专票申请、开票审核、开票记录、红冲、发票下载。</p></div><div class='req-card'><h4>退款与售后</h4><p>退款申请、退款审核、原路退回/线下退款、部分退款、服务取消、争议处理、售后工单。</p></div><div class='req-card'><h4>供应商结算</h4><p>供应商入驻、分成规则、广告费、平台佣金、结算周期、对账单、结算审核、打款记录。</p></div><div class='req-card'><h4>销售运营看板</h4><p>GMV、收入、回款、欠款、订单转化、试用转化、续费率、客户ARPU、供应商贡献、产品毛利。</p></div><div class='req-card'><h4>客户授权与交付</h4><p>购买后自动开通正式账号、API Key、IP白名单、调用额度、课程权限、会议室预约权限、专家服务工单。</p></div></div>
+  </section>
+
+  <section class="section">
+    <h2>七、建议的数据对象关系</h2>
+    <div class="svgbox">
+      <svg width="1120" height="430" viewBox="0 0 1120 430" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+        <rect x="20" y="30" width="160" height="70" rx="16" fill="#eff6ff" stroke="#93c5fd"/><text x="100" y="62" text-anchor="middle" font-size="14" font-weight="700">租户/客户</text><text x="100" y="84" text-anchor="middle" font-size="12" fill="#475569">企业/园区/机构</text>
+        <rect x="230" y="30" width="160" height="70" rx="16" fill="#f0fdf4" stroke="#86efac"/><text x="310" y="62" text-anchor="middle" font-size="14" font-weight="700">用户/角色</text><text x="310" y="84" text-anchor="middle" font-size="12" fill="#475569">买家/供应商/运营</text>
+        <rect x="440" y="30" width="160" height="70" rx="16" fill="#f8fafc" stroke="#cbd5e1"/><text x="520" y="62" text-anchor="middle" font-size="14" font-weight="700">商品/SKU</text><text x="520" y="84" text-anchor="middle" font-size="12" fill="#475569">算法/能力/课程/服务</text>
+        <rect x="650" y="30" width="160" height="70" rx="16" fill="#fff7ed" stroke="#fdba74"/><text x="730" y="62" text-anchor="middle" font-size="14" font-weight="700">价格/套餐</text><text x="730" y="84" text-anchor="middle" font-size="12" fill="#475569">试用/包年/按量</text>
+        <rect x="860" y="30" width="160" height="70" rx="16" fill="#fef2f2" stroke="#fca5a5"/><text x="940" y="62" text-anchor="middle" font-size="14" font-weight="700">供应商/店铺</text><text x="940" y="84" text-anchor="middle" font-size="12" fill="#475569">资质/合同/结算</text>
+        <rect x="120" y="180" width="160" height="70" rx="16" fill="#eff6ff" stroke="#93c5fd"/><text x="200" y="212" text-anchor="middle" font-size="14" font-weight="700">试用申请</text><text x="200" y="234" text-anchor="middle" font-size="12" fill="#475569">审核/额度/期限</text>
+        <rect x="330" y="180" width="160" height="70" rx="16" fill="#fff7ed" stroke="#fdba74"/><text x="410" y="212" text-anchor="middle" font-size="14" font-weight="700">订单</text><text x="410" y="234" text-anchor="middle" font-size="12" fill="#475569">商品/数量/金额</text>
+        <rect x="540" y="180" width="160" height="70" rx="16" fill="#fef2f2" stroke="#fca5a5"/><text x="620" y="212" text-anchor="middle" font-size="14" font-weight="700">支付/合同</text><text x="620" y="234" text-anchor="middle" font-size="12" fill="#475569">流水/签章/回款</text>
+        <rect x="750" y="180" width="160" height="70" rx="16" fill="#f5f3ff" stroke="#c4b5fd"/><text x="830" y="212" text-anchor="middle" font-size="14" font-weight="700">授权/履约</text><text x="830" y="234" text-anchor="middle" font-size="12" fill="#475569">API Key/课程/工单</text>
+        <rect x="300" y="330" width="160" height="70" rx="16" fill="#f0fdf4" stroke="#86efac"/><text x="380" y="362" text-anchor="middle" font-size="14" font-weight="700">用量记录</text><text x="380" y="384" text-anchor="middle" font-size="12" fill="#475569">调用/Token/GPU/存储</text>
+        <rect x="510" y="330" width="160" height="70" rx="16" fill="#fff7ed" stroke="#fdba74"/><text x="590" y="362" text-anchor="middle" font-size="14" font-weight="700">账单/发票</text><text x="590" y="384" text-anchor="middle" font-size="12" fill="#475569">扣费/开票/欠费</text>
+        <rect x="720" y="330" width="160" height="70" rx="16" fill="#fef2f2" stroke="#fca5a5"/><text x="800" y="362" text-anchor="middle" font-size="14" font-weight="700">结算/对账</text><text x="800" y="384" text-anchor="middle" font-size="12" fill="#475569">供应商/平台佣金</text>
+        <line x1="180" y1="65" x2="230" y2="65" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="390" y1="65" x2="440" y2="65" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="600" y1="65" x2="650" y2="65" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="600" y1="65" x2="860" y2="65" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="520" y1="100" x2="200" y2="180" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="520" y1="100" x2="410" y2="180" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="490" y1="215" x2="540" y2="215" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="700" y1="215" x2="750" y2="215" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="830" y1="250" x2="380" y2="330" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="460" y1="365" x2="510" y2="365" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="670" y1="365" x2="720" y2="365" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>八、项目主要问题点与处理建议</h2>
+    <table class="table"><thead><tr><th>优先级</th><th>问题点</th><th>为什么是问题</th><th>建议处理</th></tr></thead><tbody><tr><td><span class='badge p0'>P0</span></td><td>缺少商业闭环</td><td>清单里有产品展示、试用、API授权、广告运营，但没有订单、合同、支付、开票、结算、退款、续费、套餐、佣金等销售系统。</td><td>补建“产品销售中心+订单支付中心+财务结算中心”，并让试用、API授权、课程报名、会议室预约、专家服务都接入统一订单。</td></tr>
+<tr><td><span class='badge p0'>P0</span></td><td>产品模型未统一</td><td>算法产品、能力产品、测评产品、课程、会议室、专家咨询、算力、模型资源都像“商品”，但清单分别管理，无法统一售卖和计费。</td><td>建立统一 Product/SKU/Package/PricePlan 模型，再用产品类型承载算法、API、课程、服务、资源包。</td></tr>
+<tr><td><span class='badge p0'>P0</span></td><td>SaaS销售能力缺失</td><td>你们要把平台卖给别人，但清单主要是自用平台功能，没有租户开通、版本授权、客户管理员、白标配置、功能包授权、到期续费等能力。</td><td>增加“客户租户管理、授权许可、私有化交付参数、SaaS套餐、客户侧运营后台”。</td></tr>
+<tr><td><span class='badge p0'>P0</span></td><td>权限边界不清</td><td>只写游客/试用/正式账号，但真实角色至少包括企业买家、开发者、供应商、专家、讲师、运营、审核、财务、系统管理员。</td><td>重做 RBAC/ABAC 权限矩阵，把角色、组织、租户、产品权限、API权限、数据权限分开。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>功能范围严重膨胀</td><td>645 个功能点同时覆盖门户、商城、MLOps、训练推理、算力调度、社区、培训、测评、工作流、文件、消息、审计，首期很难同时落地。</td><td>按 MVP 分期：先交易和运营闭环，再做训练推理/算力调度等重资产能力。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>重复建设明显</td><td>用户、角色、消息、日志、文件、帮助、API授权在多个表中重复出现，容易造成多个“半套系统”。</td><td>抽象为公共能力中心，由所有业务模块调用，不在每个业务线重复开发。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>试用转付费链路断裂</td><td>清单支持试用申请、试用有效期和API授权，但试用后如何报价、转正、购买、续费、升级没有定义。</td><td>新增试用到购买漏斗：试用额度→用量看板→销售跟进→报价→合同→支付→正式授权。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>计量计费不完整</td><td>有 API 调用次数统计，但没有按产品、客户、套餐、额度、单价、扣费、欠费停用、超额计费等规则。</td><td>建设 Metering/Billing：调用量、Token、GPU时长、存储、课程、服务包统一计量。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>供应商入驻和分账缺失</td><td>算法/能力提供方、广告收费、平台合作企业都有商业关系，但没有入驻资质、收益分成、结算周期、对账。</td><td>补充供应商店铺、资质审核、合同、佣金、账单、结算、提现/打款。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>交付形态不清</td><td>部分能力是平台在线服务，部分是线下服务/专家咨询/课程/会议室/资源支持，缺少不同交付形态的工单与验收。</td><td>为 API商品、服务商品、课程商品、资源商品分别定义交付流程和验收节点。</td></tr>
+<tr><td><span class='badge p1'>P1</span></td><td>合规与风控不足</td><td>涉及数据集、模型、API、社区内容、专家咨询、支付交易，但缺少数据授权、隐私合规、内容安全、模型许可证合规、支付风控。</td><td>增加合规审查、敏感词/内容审核、数据授权证明、模型许可证审查、支付风控、审计留痕。</td></tr>
+<tr><td><span class='badge p2'>P2</span></td><td>运营指标偏技术化</td><td>已有调用次数、机构入驻、产品统计等，但商业指标不足：线索、转化率、GMV、复购、ARPU、MRR、毛利。</td><td>新增经营驾驶舱，按客户、产品、渠道、销售、供应商统计收入和转化。</td></tr>
+<tr><td><span class='badge p2'>P2</span></td><td>社区功能商业转化弱</td><td>社区有文章、问答、活动、收藏、举报，但缺少积分、等级、专家认证、项目主页、线索沉淀、转商机机制。</td><td>将社区行为沉淀为用户画像和销售线索，支持专家/机构认证与内容运营。</td></tr>
+<tr><td><span class='badge p2'>P2</span></td><td>测评服务产品化不足</td><td>有测评工具、专家库、知识库和需求上报，但缺少测评标准、报告模板、证书编号、复核、交付物归档。</td><td>定义测评服务SKU：测评标准→任务→执行→专家复核→报告/证书→归档。</td></tr>
+<tr><td><span class='badge p2'>P2</span></td><td>培训缺少证书和付费体系</td><td>有课程、报名、学习记录、学时、评价，但没有证书、考试、班级、学员收费、企业团购、核销。</td><td>增加考试/证书、培训订单、团购报名、签到核销、证书查询。</td></tr>
+<tr><td><span class='badge p2'>P2</span></td><td>基础设施成本不可控</td><td>训练、推理、K8S、Triton、Kubeflow、算力调度都需要高运维成本，若先全做会拖慢商业验证。</td><td>先做可集成接口和最小算力服务，重资产能力作为高级版或私有化增购模块。</td></tr></tbody></table>
+  </section>
+
+  <section class="section">
+    <h2>九、建议的系统菜单架构</h2>
+    <div class="menu-grid"><div class='menu-item'><b>前台门户</b><span>首页、算法集市、能力集市、测评服务、培训广场、供需广场、科技成果、创业社区、市场报告、帮助中心</span></div><div class='menu-item'><b>用户工作台</b><span>我的试用、我的订单、我的合同、我的账单、我的发票、我的API Key、我的课程、我的需求、我的模型/数据集</span></div><div class='menu-item'><b>供应商工作台</b><span>店铺资料、产品发布、API文档、试用审核、订单履约、用量数据、评价管理、结算对账</span></div><div class='menu-item'><b>运营后台</b><span>内容/Banner/广告、产品审核、试用审核、需求审核、社区审核、培训管理、专家库、客户线索、销售商机</span></div><div class='menu-item'><b>交易财务后台</b><span>商品/SKU、价格套餐、订单、支付流水、账单、开票、退款、合同、对账、供应商结算</span></div><div class='menu-item'><b>AI服务后台</b><span>算法服务、能力服务、测评服务、API网关、授权、IP白名单、调用日志、监控告警</span></div><div class='menu-item'><b>开发平台后台</b><span>数据集、标注、模型库、训练任务、推理部署、镜像仓库、算力资源、租户配额</span></div><div class='menu-item'><b>公共支撑后台</b><span>统一用户、角色权限、流程引擎、消息、文件、日志审计、数据字典、系统配置、统计分析</span></div></div>
+  </section>
+
+  <section class="section">
+    <h2>十、开发分期建议</h2>
+    <table class="table"><thead><tr><th>阶段</th><th>周期建议</th><th>交付重点</th></tr></thead><tbody><tr><td>0. 产品收敛与建模</td><td>2-4周</td><td>统一产品模型、角色权限矩阵、交易对象、核心流程、MVP范围；冻结第一版 PRD。</td></tr><tr><td>1. 可销售 MVP</td><td>8-12周</td><td>门户/集市、统一用户、产品详情、试用申请、客户线索、后台审核、API授权、订单/支付/发票的最小闭环。</td></tr><tr><td>2. 运营增强版</td><td>8-10周</td><td>供应商入驻、合同报价、账单计费、培训报名、活动路演、社区运营、经营看板。</td></tr><tr><td>3. AI服务平台版</td><td>12-16周</td><td>数据集、模型管理、API网关、推理服务、监控告警、模型/能力服务统一交付。</td></tr><tr><td>4. 高级MLOps/算力版</td><td>按客户项目</td><td>训练平台、Kubeflow/Triton/K8S、算力调度、GPU计费、多租户资源隔离、私有化交付。</td></tr></tbody></table>
+    <h3>MVP必须包含</h3>
+    <div class="flow"><div class="step core">产品目录</div><div class="step core">企业注册认证</div><div class="step core">试用申请</div><div class="step core">API授权</div><div class="step missing">订单支付</div><div class="step missing">合同发票</div><div class="step core">调用统计</div><div class="step core">运营后台</div></div>
+  </section>
+
+  <section class="section">
+    <h2>十一、原始功能一级模块索引</h2>
+    <p class="lead">以下为原始清单按表格和一级模块归纳后的索引，用于和研发/产品团队做范围核对。</p>
+    
+      <details class="module-detail"><summary>AI算法集市 · 122 个功能点</summary>
+        <ul class="module-list"><li><b>算法集市门户</b><span>用户中心(7)、关于我们(5)、首页轮播图(1)、算法服务产品(1)、能力服务产品(1)、测评服务产品(1)、人才创新(1)、产业需求(1)、创业支持(1)、创业支持诉求上报(1)、门户入口(1)、登录账号类型处理(1)</span></li><li><b>业务运营管理</b><span>算法产品管理(10)、能力产品管理(10)、测试产品管理(10)、内容管理(10)、标签管理(5)、评价管理(5)、分类管理(1)、banner管理(1)、广告运营(1)、创业支持诉求上报管理(1)、试用申请管理(1)、主责企业管理(1)、试用产品配置(1)</span></li><li><b>运营支撑管理</b><span>用户运营管理(22)、综合运营支撑(11)、运营统计分析(9)、产业运营数据回流(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>AI算法服务 · 206 个功能点</summary>
+        <ul class="module-list"><li><b>算法服务管理</b><span>部署管理(9)、算法版本管理(7)、算法演示(5)、算法训练任务管理(5)、算法管理(4)、算法配置管理(4)、算法API管理(4)、算法集成服务(1)、存证平台对接服务(1)</span></li><li><b>资源智能调度管理</b><span>算力资源管理(10)、算力智能调度(10)、统计分析(3)、算力管理(2)</span></li><li><b>监控运维管理</b><span>服务监控(7)、监控信息管理(6)、消息服务(4)、统计分析(3)、系统管理(2)</span></li><li><b>算法创业孵化服务管理</b><span>创业社区(13)、创业支持资源管理(4)、AI市场研究分析(3)、社区运营后台管理(2)</span></li><li><b>算法供需对接服务管理</b><span>供需发布管理(6)、科技成果发布管理(6)</span></li><li><b>支撑能力组件</b><span>统一消息服务(22)、统一用户管理(17)、日志审计服务(17)、统一流程服务(17)、统一帮助服务(8)、统一文件服务(4)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>AI能力服务 · 65 个功能点</summary>
+        <ul class="module-list"><li><b>语音识别与合成能力服务</b><span>语音识别与合成能力API管理(7)、语音识别与合成产品管理(1)、语音识别与合成产品试用管理(1)、语音识别与合成产品功能特性管理(1)、语音识别与合成产品应用场景管理(1)、语音识别与合成产品帮助文档管理(1)、语音识别与合成能力集成(1)</span></li><li><b>自然语言处理能力服务</b><span>自然语言处理能力API管理(7)、自然语言处理产品管理(1)、自然语言处理产品试用管理(1)、自然语言处理产品功能特性管理(1)、自然语言处理产品应用场景管理(1)、自然语言处理产品帮助文档管理(1)、自然语言处理能力集成(1)</span></li><li><b>图像与视觉识别能力服务</b><span>图像与视觉识别能力API管理(7)、图像与视觉识别产品管理(1)、图像与视觉识别产品试用管理(1)、图像与视觉识别产品功能特性管理(1)、图像与视觉识别产品应用场景管理(1)、图像与视觉识别产品帮助文档管理(1)、图像与视觉识别能力集成(1)</span></li><li><b>智能推荐与个性化能力服务</b><span>智能推荐与个性化API管理(7)、智能推荐与个性化产品管理(1)、智能推荐与个性化产品试用管理(1)、智能推荐与个性化产品功能特性管理(1)、智能推荐与个性化产品应用场景管理(1)、智能推荐与个性化产品帮助文档管理(1)、智能推荐与个性化能力集成(1)</span></li><li><b>智能对话与聊天机器人能力服务</b><span>智能对话与聊天机器人能力API管理(7)、智能对话与聊天机器人产品管理(1)、智能对话与聊天机器人产品试用管理(1)、智能对话与聊天机器人产品功能特性管理(1)、智能对话与聊天机器人产品应用场景管理(1)、智能对话与聊天机器人产品帮助文档管理(1)、智能对话与聊天机器人能力集成(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>AI测评服务 · 30 个功能点</summary>
+        <ul class="module-list"><li><b>理论标准知识库</b><span>知识库中心(5)、知识检索(1)</span></li><li><b>AI测评工具</b><span>测评API服务(12)、测评工具管理(4)、测评工具集成服务(1)</span></li><li><b>领域专家测评服务</b><span>专家库管理(4)、需求上报(1)、需求审核与指派(1)、测评咨询服务(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>AI人才培训 · 22 个功能点</summary>
+        <ul class="module-list"><li><b>培训广场</b><span>首页(1)、课程专题(1)、培训专题(1)、线下培训预约(1)</span></li><li><b>培训广场后台管理</b><span>展示模板管理(1)、轮播图管理(1)、线下培训信息管理(1)、线下培训预约管理(1)、线下培训预约名单导出(1)</span></li><li><b>培训课程管理</b><span>课程分类管理(1)、课程简介管理(1)、课程讲师介绍(1)、课程发布管理(1)、课程内容管理(1)、课程梳理服务(1)</span></li><li><b>培训学习管理</b><span>个人信息管理(1)、学习记录管理(1)、学习进度管理(1)、培训学时管理(1)</span></li><li><b>培训辅助管理</b><span>课程点播管理(1)、评估反馈管理(1)、培训课程统计(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>数据集管理 · 58 个功能点</summary>
+        <ul class="module-list"><li><b>数据集管理服务</b><span>数据集列表(1)、数据集筛选(1)、数据集详情(1)、数据集导入(1)、数据集导出(1)、数据集删除(1)、数据集更新(1)、数据集排序(1)、数据集搜索(1)、数据集操作记录追踪(1)、数据集版本控制(1)、远程存储支持(1)、多用户协作(1)</span></li><li><b>数据预处理</b><span>数据转换(1)、数据归一化(1)</span></li><li><b>数据集概览</b><span>数据样本预览(1)、数据统计信息展示(1)、标签统计信息展示(1)、数据集图表展示(1)</span></li><li><b>数据标注</b><span>音频数据标注(7)、视频数据标注(6)、图像数据标注(5)、文本数据标注(4)、标注任务管理(1)、数据导入(1)、标注模板(1)、标注结果存储(1)、标注结果导出(1)、标注质量评估与检验(1)、标注数据关联与引用(1)、语音识别与注释(1)、数据标注过程监控(1)、数据标注教程文档(1)</span></li><li><b>数据安全与权限管理</b><span>数据安全策略管理(1)、数据访问权限管理(1)、身份认证与授权管理(1)、访问日志与审计功能(1)、数据加密与解密(1)、数据脱敏与去标识化(1)、异常行为监控预警(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>模型训练 · 42 个功能点</summary>
+        <ul class="module-list"><li><b>模型训练服务</b><span>训练学习模式(5)、训练参数设置(4)、集成开发环境(3)、分布式训练(1)、GPU加速训练(1)、多任务联合训练(1)、大模型训练(1)、算法模型库(1)、自定义训练任务(1)、训练流水线(1)、模型选择(1)</span></li><li><b>训练支撑服务</b><span>数据卷管理(4)、迁移学习(1)、自动调参(1)、自动早停(1)、在线调试(1)、半自动或自动标注(1)、动态调整学习率(1)、配额管理(1)、租户隔离(1)</span></li><li><b>训练分析服务</b><span>可视化分析工具（TensorBoard）(5)、模型性能评估(1)、异常检测(1)、调试与错误分析(1)、可视化训练日志(1)、在线帮助文档(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>模型推理 · 31 个功能点</summary>
+        <ul class="module-list"><li><b>模型部署</b><span>灰度发布(1)、实时更新(1)、自动缩放(1)</span></li><li><b>硬件环境适配</b><span>未细分(1)</span></li><li><b>多框架推理</b><span>主流框架(1)、Triton 与 Kubernetes集成(1)、Triton 与 Kubeflow框架(1)</span></li><li><b>高性能推理</b><span>动态批量处理器(1)、序列批量处理器(1)、并发执行(1)、最优模型配置(1)、模型集成(1)、串流输入(1)</span></li><li><b>模型推理</b><span>模型处理(2)、复杂推理模型(2)、单GPU模型推理(1)、分布式推理(1)、实时推理服务(1)</span></li><li><b>接口服务</b><span>gRPC接口服务(1)、RESTful接口服务(1)</span></li><li><b>模型监控</b><span>GPU利用率监测(1)、GPU延迟情况监测(1)、GPU内存使用率监测(1)、推理吞吐量监测(1)、限流监测(1)</span></li><li><b>推理服务调优</b><span>评估推理服务配置(1)、生成评估报告(1)</span></li><li><b>可视化界面</b><span>未细分(1)</span></li><li><b>推理服务鉴权</b><span>未细分(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>模型管理 · 18 个功能点</summary>
+        <ul class="module-list"><li><b>模型开源许可证管理</b><span>未细分(1)</span></li><li><b>模型任务类型管理</b><span>未细分(1)</span></li><li><b>AI框架管理</b><span>未细分(1)</span></li><li><b>模型存储管理</b><span>存储扩容管理(3)、默认存储分配(1)、存储空间监控与统计(1)</span></li><li><b>模型库管理</b><span>模型文件管理(3)、模型创建(1)、模型介绍文件上传(1)、模型版本管理(1)</span></li><li><b>热门任务</b><span>未细分(1)</span></li><li><b>模型标签分类筛选</b><span>未细分(1)</span></li><li><b>模型查询</b><span>未细分(1)</span></li><li><b>模型权限管理</b><span>未细分(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>模型资源服务 · 22 个功能点</summary>
+        <ul class="module-list"><li><b>基础大模型集成</b><span>语言大模型集成(1)、CV大模型集成(1)、多模态大模型集成(1)</span></li><li><b>行业大模型集成</b><span>政务大模型集成(1)、金融大模型集成(1)、医药大模型集成(1)</span></li><li><b>场景模型集成</b><span>政企知识检索模型集成(1)、政企会议助手模型集成(1)、智能创意营销模型集成(1)、行业研发助手模型集成(1)、设备巡检模型集成(1)、智慧城市模型集成(1)、图像生成模型集成(1)、图像理解模型集成(1)、3D生成模型集成(1)、视频生成模型集成(1)、平面设计模型集成(1)、影视制作模型集成(1)、电商营销模型集成(1)、工艺指标预测模型集成(1)、销售预测模型集成(1)、财务异常检测模型集成(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>基础框架集成 · 8 个功能点</summary>
+        <ul class="module-list"><li><b>调度框架集成</b><span>Kubeflow集成(1)、Volcano集成(1)</span></li><li><b>算法框架集成</b><span>MindSpore集成(1)、PaddlePaddle集成(1)、PyTorch集成(1)、TensorFlow集成(1)</span></li><li><b>推理框架集成</b><span>Triton Inference Server集成(1)、MindSpore Serving集成(1)</span></li></ul>
+      </details>
+    
+      <details class="module-detail"><summary>开发支撑能力 · 21 个功能点</summary>
+        <ul class="module-list"><li><b>开发工作台</b><span>我创建的(1)、我收藏的(1)、访问令牌(1)、开发者组织管理(1)</span></li><li><b>平台镜像管理</b><span>镜像服务管理(7)、镜像系统配置(5)、镜像管理(2)、镜像日志管理(2)、镜像仓库管理(1)</span></li></ul>
+      </details>
+    
+  </section>
+
+  <section class="section">
+    <h2>十二、给研发立项时的控制线</h2>
+    <div class="grid2">
+      <div class="card"><h4>首期要做什么</h4><p>围绕“可卖”：官网获客、商品目录、试用申请、客户线索、销售跟进、订单支付、API授权、用量统计、发票/账单、运营后台。</p></div>
+      <div class="card"><h4>首期不要做什么</h4><p>不要一开始就重做完整 Kubeflow、Triton、算力调度、复杂训练平台、全量数据标注系统。它们成本高、周期长，适合作为高级版或集成版。</p></div>
+      <div class="card"><h4>最先设计的数据模型</h4><p>租户、组织、用户、角色、商品、SKU、套餐、订单、支付流水、合同、发票、API授权、用量记录、供应商、结算单。</p></div>
+      <div class="card"><h4>验收标准</h4><p>不要只验收页面。必须验收端到端链路：注册→试用→审核→授权→调用→计量→下单→支付→开票→续费/停用。</p></div>
+    </div>
+  </section>
+
+  <div class="footer">生成文件：AI公共服务平台功能清单_流程图与项目拆解.html ｜ 建议用浏览器打开后投屏或打印为 PDF。</div>
+</div>
+</body>
+</html>
